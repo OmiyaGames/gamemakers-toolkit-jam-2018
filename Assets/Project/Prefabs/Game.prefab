@@ -3839,7 +3839,8 @@ MonoBehaviour:
   numRopes: 3
   originalRope: {fileID: 114723689536624914}
   handPosition: {fileID: 4681135592222156}
-  testBody: {fileID: 0}
+  treeList: {fileID: 114354558817169190}
+  minDistanceFromTree: 15
 --- !u!114 &114492307101445082
 MonoBehaviour:
   m_ObjectHideFlags: 1
