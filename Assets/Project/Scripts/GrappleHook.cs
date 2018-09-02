@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.CrossPlatformInput;
+//using UnityStandardAssets.CrossPlatformInput;
 
 namespace Project
 {
@@ -37,9 +39,13 @@ namespace Project
         // Update is called once per frame
         void Update()
         {
-            if(Input.anyKeyDown)
+            if(CrossPlatformInputManager.GetButtonDown("Fire1") == true)
             {
                 allGrapplingHooks[0].connectedBody = testBody;
+            }
+            else if (CrossPlatformInputManager.GetButtonDown("Fire2") == true)
+            {
+                allGrapplingHooks[0].connectedBody = null;
             }
         }
     }
