@@ -14,13 +14,32 @@ namespace Project
         Rope originalRope;
         [SerializeField]
         Transform handPosition;
-
-        [Header("To remove")]
         [SerializeField]
-        Rigidbody testBody;
+        TreeGenerator treeList;
+        [SerializeField]
+        float minDistanceFromTree = 15f;
 
         Rope[] allRopes;
-        //List<Rigidbody> linkedBodies;
+
+        public ElementStatus ClosestTree
+        {
+            get
+            {
+                float minDistance = minDistanceFromTree;
+                float compareDistance;
+                ElementStatus returnTree = null;
+                foreach (ElementStatus tree in treeList.AllElements)
+                {
+                    compareDistance = Vector3.Distance(transform.position, tree.transform.position);
+                    if(compareDistance < minDistance)
+                    {
+                        returnTree = tree;
+                        minDistance = compareDistance;
+                    }
+                }
+                return returnTree;
+            }
+        }
 
         // Use this for initialization
         void Start()
@@ -34,21 +53,34 @@ namespace Project
                 clone.transform.localScale = Vector3.one;
                 allRopes[i] = clone.GetComponent<Rope>();
             }
-
-            //linkedBodies = new List<Rigidbody>(numGrapplingHooks);
         }
 
         // Update is called once per frame
         void Update()
         {
-            if(CrossPlatformInputManager.GetButtonDown("Fire1") == true)
+            ElementStatus tree = ClosestTree;
+
+            if (CrossPlatformInputManager.GetButtonDown("Fire1") == true)
             {
-                allRopes[0].IsVisible = true;
-                allRopes[0].Joint.connectedBody = testBody;
+                if (tree != null)
+                {
+                    foreach (Rope rope in allRopes)
+                    {
+                        if (rope.IsVisible == false)
+                        {
+                            rope.IsVisible = true;
+                            rope.Joint.connectedBody = tree.Body;
+                            break;
+                        }
+                    }
+                }
             }
             else if (CrossPlatformInputManager.GetButtonDown("Fire2") == true)
             {
-                allRopes[0].IsVisible = false;
+                foreach(Rope rope in allRopes)
+                {
+                    rope.IsVisible = false;
+                }
             }
 
             // Update visuals
