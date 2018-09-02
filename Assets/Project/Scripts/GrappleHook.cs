@@ -59,7 +59,10 @@ namespace Project
         void Update()
         {
             ElementStatus tree = ClosestTree;
-
+            if (tree != null)
+            {
+                // FIXME: add something to indicate this is the closest tree
+            }
             if (CrossPlatformInputManager.GetButtonDown("Fire1") == true)
             {
                 if (tree != null)
