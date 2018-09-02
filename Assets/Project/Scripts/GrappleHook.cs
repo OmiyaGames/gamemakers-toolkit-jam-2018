@@ -9,28 +9,30 @@ namespace Project
     public class GrappleHook : MonoBehaviour
     {
         [SerializeField]
-        int numGrapplingHooks = 3;
+        int numRopes = 3;
         [SerializeField]
-        Joint originalSpring;
+        Rope originalRope;
+        [SerializeField]
+        Transform handPosition;
 
         [Header("To remove")]
         [SerializeField]
         Rigidbody testBody;
 
-        Joint[] allGrapplingHooks;
+        Rope[] allRopes;
         //List<Rigidbody> linkedBodies;
 
         // Use this for initialization
         void Start()
         {
-            allGrapplingHooks = new Joint[numGrapplingHooks];
-            allGrapplingHooks[0] = originalSpring;
-            for(int i = 1; i < allGrapplingHooks.Length; ++i)
+            allRopes = new Rope[numRopes];
+            allRopes[0] = originalRope;
+            for(int i = 1; i < allRopes.Length; ++i)
             {
-                GameObject clone = Instantiate(originalSpring.gameObject, originalSpring.transform.parent);
+                GameObject clone = Instantiate(originalRope.gameObject, originalRope.transform.parent);
                 clone.transform.localPosition = Vector3.zero;
                 clone.transform.localScale = Vector3.one;
-                allGrapplingHooks[i] = clone.GetComponent<Joint>();
+                allRopes[i] = clone.GetComponent<Rope>();
             }
 
             //linkedBodies = new List<Rigidbody>(numGrapplingHooks);
@@ -41,11 +43,28 @@ namespace Project
         {
             if(CrossPlatformInputManager.GetButtonDown("Fire1") == true)
             {
-                allGrapplingHooks[0].connectedBody = testBody;
+                allRopes[0].IsVisible = true;
+                allRopes[0].Joint.connectedBody = testBody;
             }
             else if (CrossPlatformInputManager.GetButtonDown("Fire2") == true)
             {
-                allGrapplingHooks[0].connectedBody = null;
+                allRopes[0].IsVisible = false;
+            }
+
+            // Update visuals
+            int i = 0;
+            float lerp;
+            foreach (Rope rope in allRopes)
+            {
+                if(rope.IsVisible == true)
+                {
+                    for(; i < rope.Line.positionCount; ++i)
+                    {
+                        lerp = i;
+                        lerp /= (rope.Line.positionCount - 1);
+                        rope.Line.SetPosition(i, Vector3.Lerp(handPosition.position, rope.Joint.connectedBody.position, lerp));
+                    }
+                }
             }
         }
     }
